@@ -1,16 +1,13 @@
-import React from "react";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Scatter } from "react-chartjs-2";
 
 import "./App.css";
-import { NavLink } from "react-router-dom";
 
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
 
 defaults.plugins.title.display = true;
 defaults.plugins.title.align = "start";
-defaults.plugins.title.font.size = 20;
 defaults.plugins.title.color = "black";
 
 const linkList = [
@@ -68,6 +65,20 @@ const data = [
   },
 ];
 
+const ColorNeeded = [
+  "rgba(255, 26, 104)",
+  "rgba(54, 162, 235)",
+  "rgba(255, 206, 86)",
+  "rgba(75, 192, 192)",
+  "rgba(153, 102, 255)",
+  "rgba(255, 159, 64)",
+  "rgba(0, 0, 0)",
+];
+
+const backgroundColor = convertToRgba({rgbValues:ColorNeeded,opacity:0.5})
+
+const borderColor = convertToRgba({rgbValues:ColorNeeded, opacity:1})
+
 const App = () => {
   return (
     <div className="App">
@@ -79,24 +90,8 @@ const App = () => {
                 {
                   label: "Your Name", // Name of the chart
                   data: data, // data in the chart
-                  backgroundColor: [
-                    "rgba(255, 26, 104, 0.5)",
-                    "rgba(54, 162, 235, 0.5)",
-                    "rgba(255, 206, 86, 0.5)",
-                    "rgba(75, 192, 192, 0.5)",
-                    "rgba(153, 102, 255, 0.5)",
-                    "rgba(255, 159, 64, 0.5)",
-                    "rgba(0, 0, 0, 0.5)",
-                  ],
-                  borderColor: [
-                    "rgba(255, 26, 104, 1)",
-                    "rgba(54, 162, 235, 1)",
-                    "rgba(255, 206, 86, 1)",
-                    "rgba(75, 192, 192, 1)",
-                    "rgba(153, 102, 255, 1)",
-                    "rgba(255, 159, 64, 1)",
-                    "rgba(0, 0, 0, 1)",
-                  ],
+                  backgroundColor: backgroundColor,
+                  borderColor: borderColor,
                   pointRadius: 10, // radius of points
                   borderWidth: 1, // border to points
                   showLine: true, // show line
@@ -109,7 +104,7 @@ const App = () => {
                 tooltip: {
                   callbacks: {
                     // data shown on click over the point can be modified to go to a link
-                    label: (context) => {
+                    label: (context:any) => {
                       return `X: ${context.raw.x} Y: ${context.raw.y} & Data: ${context.raw.data}`;
                     },
                   },
@@ -138,7 +133,13 @@ const App = () => {
 
 export default App;
 
-function Link_box({ Link, Name, ColorBg }) {
+type Props ={
+  Link: string,
+  Name: string,
+  ColorBg: string,
+}
+
+function Link_box({ Link, Name, ColorBg }:Props) {
   return (
     <>
       <a href={Link} className="anchor_style">
@@ -147,4 +148,15 @@ function Link_box({ Link, Name, ColorBg }) {
       </a>
     </>
   );
+}
+
+type Props2={
+  rgbValues: string[],
+  opacity: number,
+}
+
+function convertToRgba({rgbValues, opacity}:Props2) {
+  return rgbValues.map(rgb => {
+      return rgb.replace("rgb(", "rgba(").replace(")", `, ${opacity})`);
+  });
 }
